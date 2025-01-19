@@ -7,15 +7,21 @@ import Contact from "./pages/Contact";
 import Dashboard from "./pages/Dashboard";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import { useState } from "react";
 
 function App() {
+  const [email, setEmail] = useState<string>("");
+
+  const getLoggedInEmail = (email: string) => {
+    setEmail(email);
+  };
   return (
     <>
       <Routes>
         <Route
           path="/"
           element={
-            <MainLayout>
+            <MainLayout email={email}>
               <Home />
             </MainLayout>
           }
@@ -23,7 +29,7 @@ function App() {
         <Route
           path="/blog"
           element={
-            <MainLayout>
+            <MainLayout email={email}>
               <Blog />
             </MainLayout>
           }
@@ -31,7 +37,7 @@ function App() {
         <Route
           path="/about"
           element={
-            <MainLayout>
+            <MainLayout email={email}>
               <About />
             </MainLayout>
           }
@@ -39,7 +45,7 @@ function App() {
         <Route
           path="/contact-us"
           element={
-            <MainLayout>
+            <MainLayout email={email}>
               <Contact />
             </MainLayout>
           }
@@ -47,12 +53,12 @@ function App() {
         <Route
           path="/dashboard"
           element={
-            <MainLayout>
+            <MainLayout email={email}>
               <Dashboard />
             </MainLayout>
           }
         />
-        <Route path="/login" element={<Login />} />
+        <Route path="/login" element={<Login getEmail={getLoggedInEmail} />} />
         <Route path="/register" element={<Register />} />
       </Routes>
     </>

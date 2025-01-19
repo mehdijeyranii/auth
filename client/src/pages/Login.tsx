@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-const Login = () => {
+interface LoginType {
+  getEmail: (email: string) => void;
+}
+
+const Login: React.FC<LoginType> = ({ getEmail }) => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -11,6 +15,10 @@ const Login = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleGetEmail = () => {
+    getEmail(formData.email);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -62,7 +70,11 @@ const Login = () => {
           />
           <div className="flex justify-between items-center px-2">
             <Link to="/register">I don't have an account</Link>
-            <button className="px-5 py-2 bg-rose-500 rounded" type="submit">
+            <button
+              className="px-5 py-2 bg-rose-500 rounded"
+              type="submit"
+              onClick={handleGetEmail}
+            >
               Login
             </button>
           </div>

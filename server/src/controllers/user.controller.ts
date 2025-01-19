@@ -1,6 +1,14 @@
 import { Request, Response } from "express";
 import User from "../models/user.model";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
+const validateInput = (email: string, password: string, username?: string) => {
+  if (!email || !password) {
+    return "Please fill all fields";
+  }
+  return null;
+};
 
 export const registerUser = async (
   req: Request,
@@ -8,8 +16,10 @@ export const registerUser = async (
 ): Promise<void> => {
   const { username, email, password } = req.body;
 
-  if (!username || !email || !password) {
-    res.status(400).json({ message: "Please fill all fields" });
+  const error = validateInput(email, username, password);
+
+  if (error) {
+    res.status(400).json({ message: error });
     return;
   }
 
@@ -44,8 +54,10 @@ export const registerUser = async (
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 
-  if (!email || !password) {
-    res.status(400).json({ message: "Please fill all fields" });
+  const error = validateInput(email, password);
+
+  if (error) {
+    res.status(400).json({ message: error });
     return;
   }
 
@@ -58,14 +70,18 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
-
     if (!isMatch) {
       res.status(400).json({ message: "Invalid credentials" });
       return;
     }
 
+    const token = jwt.sign(
+      { id: user._id },
+      process.env.JWT_SECRET || "secret_key",
+      { expiresIn: "1h" }
+    );
 
-    res.status(200).json({ message: "Login successful"});
+    res.status(200).json({ message: "Login successful", token });
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err });
   }
